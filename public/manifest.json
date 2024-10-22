@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Handwriting recognition app",
+  "name": "Handwriting text recognition",
   "icons": [
     {
       "src": "favicon.ico",
