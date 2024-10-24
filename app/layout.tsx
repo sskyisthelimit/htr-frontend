@@ -1,17 +1,12 @@
-import { Sidebar } from "@/components/Sidebar";
-import '../styles/globals.css';
-
+import '../src/styles/globals.css';
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
-      <body>
-        <Sidebar />
-        <main>{children}</main>
-      </body>
+      <body>{children}</body>
     </html>
-  );
+  )
 }
