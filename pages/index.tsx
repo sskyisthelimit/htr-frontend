@@ -1,164 +1,168 @@
-import '../src/styles/globals.css';
-import { useState, useEffect } from 'react';
-import { Transition } from '@headlessui/react';
-import { FiUpload } from 'react-icons/fi';
-import Image from 'next/image';
+import React, { useEffect, useRef, useState } from "react";
+import IntroSection from "../components/IntroSection";
+import NavContent from "../components/NavContent";
+import Uploader from "../components/Uploader";
+import { motion } from 'framer-motion';
 
 const Home = () => {
-  const [image, setImage] = useState<File | null>(null);
-  const [progressText, setProgressText] = useState<string[][]>([[]]);
-  const [chats, setChats] = useState<{ image: string; filename: string; text: string[][] }[]>([]);
-  const [selectedChat, setSelectedChat] = useState<number | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [chatLog, setChatLog] = useState([]);
+  const [image, setImage] = useState(null); // State for uploaded image
+  const [tokens, setTokens] = useState([]); // State for generated tokens
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+  const [isSubmitted, setIsSubmitted] = useState(false); 
+  const [showMenu, setShowMenu] = useState(false);
+  const navRef = useRef();
 
-  // Load chats from local storage on mount
+  const handleOutsideClick = (e) => {
+    if (navRef.current && !navRef.current.contains(e.target)) {
+      setShowMenu(false);
+    }
+  };
+
   useEffect(() => {
-    const storedChats = localStorage.getItem('chats');
-    if (storedChats) {
-      setChats(JSON.parse(storedChats));
+    if (showMenu) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
     }
-  }, []);
 
-  const handleFileDrop = (files: FileList) => {
-    if (files.length > 0) {
-      setImage(files[0]);
-    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showMenu]);
+  const handleImageUpload = (uploadedImage) => {
+    setImage(uploadedImage);
+    setTokens([]);
+    setIsSubmitted(false);
   };
 
-  const simulateApiResponse = () => {
-    return new Promise<void>((resolve) => {
-      const words = ['This', 'is', 'a', 'mock', 'stream', 'of', 'words', 'for', 'testing.'];
-      let wordIndex = 0;
-      const intervalId = setInterval(() => {
-        if (wordIndex < words.length) {
-          setProgressText((prevText) => {
-            const lastBlock = prevText[prevText.length - 1] || [];
-            const updatedText = [...prevText.slice(0, -1), [...lastBlock, words[wordIndex]]];
-            return updatedText;
-          });
-          wordIndex++;
-        } else {
-          clearInterval(intervalId);
-          resolve();
-        }
-      }, 500);
-    });
+  const handleImageSubmit = () => {
+    setIsSubmitted(true);
   };
 
-  const handleSubmit = async () => {
-    setIsUploading(true);
-    await simulateApiResponse();
-    setIsUploading(false);
-    if (image) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newChat = { image: reader.result as string, filename: image.name, text: progressText };
-        const updatedChats = [...chats, newChat];
-        setChats(updatedChats);
-        localStorage.setItem('chats', JSON.stringify(updatedChats));
-        setImage(null);
-        setProgressText([[]]);
-      };
-      reader.readAsDataURL(image);
-    }
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="min-h-screen bg-pastelCream flex flex-col items-center justify-center p-4">
-      <h1 className="text-4xl font-bold text-black mb-8">
-        Handwriting Recognition App
-      </h1>
-
-      {!image ? (
-        <div
-          className="border-4 border-dashed border-black p-12 rounded-lg mb-4"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            handleFileDrop(e.dataTransfer.files);
-          }}
-        >
-          <div className="flex flex-col items-center">
-            <FiUpload className="text-5xl text-pastelBlue mb-4" />
-            <p className="text-xl text-black">Drag and drop an image to upload</p>
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-center mb-4">
-          <Image src={URL.createObjectURL(image)} alt="uploaded image" width={100} height={100} className="rounded mr-4" />
-          <p className="text-black">File: {image.name}</p>
-        </div>
-      )}
-
-      <button
-        onClick={handleSubmit}
-        className="bg-pastelBlue text-white px-4 py-2 rounded shadow-lg hover:bg-black"
-        disabled={!image || isUploading}
-      >
-        {isUploading ? 'Processing...' : 'Submit'}
-      </button>
-
-      {progressText.length > 1 && (
-        <div className="mt-8 w-full max-w-lg">
-          <p className="text-black font-semibold">Response:</p>
-          <div className="text-black border-2 border-black p-4 rounded-md">
-            {progressText.map((line, index) => (
-              <p key={index}>{line.join(' ')}</p>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Sidebar/Drawer for chats */}
-      <Transition
-        show={chats.length > 0}
-        enter="transition ease-out duration-300"
-        enterFrom="opacity-0 transform translate-x-full"
-        enterTo="opacity-100 transform translate-x-0"
-        leave="transition ease-in duration-200"
-        leaveFrom="opacity-100 transform translate-x-0"
-        leaveTo="opacity-0 transform translate-x-full"
-        className="fixed right-0 top-0 h-full w-64 bg-pastelCream shadow-lg p-4"
-      >
-        <div className="overflow-y-auto h-full">
-          <h2 className="text-2xl font-bold mb-4 text-black">Chats</h2>
-          {chats.map((chat, index) => (
-            <div
-              key={index}
-              className="mb-4 cursor-pointer"
-              onClick={() => setSelectedChat(index)}
+    <>
+      <header>
+        <div className="menu">
+          <button onClick={() => setShowMenu(true)}>
+            <svg
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              stroke="#000"
+              strokeLinecap="round"
             >
-              <Image
-                src={chat.image}
-                alt="uploaded image"
-                width={50}
-                height={50}
-                className="rounded"
-              />
-              <p className="text-black truncate">{chat.filename}</p>
-            </div>
-          ))}
+              <path d="M21 18H3M21 12H3M21 6H3" />
+            </svg>
+          </button>
+        </div>
+        <h1 style={{color: '#000'}}>HTR AI</h1>
+      </header>
 
-          {selectedChat !== null && (
-            <div className="mt-8">
-              <Image
-                src={chats[selectedChat].image}
-                alt="uploaded image"
-                width={100}
-                height={100}
-                className="rounded mb-4"
+      {showMenu && (
+        <nav ref={navRef} className={`show`}>
+          <div className="navItems">
+            <div className="navCloseIcon">
+              <svg viewBox="0 0 24.00 24.00"
+                fill="none" xmlns="http://www.w3.org/2000/svg"
+                transform="matrix(1, 0, 0, 1, 0, 0)"
+                width="24"  /* Set width to 24 */
+                height="24"  /* Set height to 24 */
+                onClick={() => setShowMenu(false)}
+              >
+
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M4 18H10" stroke="#7e7d7c" stroke-width="2.208" stroke-linecap="round"></path>
+                    <path d="M4 12L16 12" stroke="#7e7d7c" stroke-width="2.208" stroke-linecap="round"></path>
+                    <path d="M4 6L20 6" stroke="#7e7d7c" stroke-width="2.208" stroke-linecap="round"></path>
+                </g>
+              </svg>
+            </div>
+            <NavContent/>
+          </div>
+        </nav>
+      )}
+
+      {!showMenu && (
+        <aside className="sideMenu">
+        <NavContent
+          chatLog={chatLog}
+          setChatLog={setChatLog}
+          setShowMenu={setShowMenu}
+        />
+      </aside>
+      )}
+      
+
+      <section className="chatBox">
+          <div className="chat-container">
+            {!isSubmitted ? (<IntroSection />) : <></>}
+            {!isSubmitted ? (
+              <Uploader
+                onImageUpload={handleImageUpload}
+                onSubmit={handleImageSubmit}
+                tokens={tokens}
+                setTokens={setTokens}
               />
-              <p className="text-black">{chats[selectedChat].filename}</p>
-              <div className="mt-4 border-2 border-black p-4 rounded-md">
-                {chats[selectedChat].text.map((line, index) => (
-                  <p key={index}>{line.join(' ')}</p>
-                ))}
+            ) : (
+              image && (
+                <div className="image-thumbnail-container">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={image.name}
+                    className="thumbnail"
+                    style={{ width: '70px', height: '70px', cursor: 'pointer' }}
+                    onClick={() => window.open(URL.createObjectURL(image), '_blank')}
+                  />
+                  <p className='response-title'>{image.name}</p>
+                </div>
+              )
+            )}
+
+            {/* Modal for full-size image */}
+            {isModalOpen && (
+              <div className="modal-overlay" onClick={closeModal}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="Full-size view"
+                    className="full-size-image"
+                  />
+                  <button className="close-modal-button" onClick={closeModal}>Close</button>
+                </div>
+              </div>
+            )}
+            <div className="tokens-container">
+              <div className="tokens-display">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {tokens.map((token, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                      style={{ whiteSpace: 'pre-wrap', color: '#282523'}} // Preserves space between tokens
+                    >
+                      {token}{' '}
+                    </motion.span>
+                  ))}
+                </motion.div>
               </div>
             </div>
-          )}
-        </div>
-      </Transition>
-    </div>
+          </div> 
+      </section>
+    </>
   );
 };
 
