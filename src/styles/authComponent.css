@@ -1,0 +1,157 @@
+.authContainer{
+    min-height: 100vh;
+    width: 100vw;
+    background-color: #f8f4f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.authOptionsWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    width: 90%;
+    padding: 0px 40px 0px 40px;
+}
+
+.authPageTitle {
+    color: #000;
+    font-size: 32px;
+    line-height: 33px; 
+  }
+.authPageTitle pre {
+    margin: 0;
+    display: inline;
+}
+.authMessage{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 6px 0px;
+    color: #b5001e;
+}
+
+.authPageDetails {
+    padding-left: 7px;
+    color: #884400;
+    font-size: 20px;
+    font-weight: 400;
+}
+.authPageDetails pre {
+    margin: 0;
+    display: inline;
+}
+.authInput:focus {
+    border-color: hsla(36, 61%, 16%, 0.8);
+    outline: none;
+}
+
+.authInput{
+    width: 270px;
+    border-radius: 7px;
+    background-color: #fbe2cc;
+    outline-color: #675338;
+    border: 2px solid transparent;  
+    font-size: 16px;
+    color: #000;
+    padding: 10px 25px;
+    max-width: 560px;
+}
+
+.authButtonsWrapper{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.authButton{
+  background-color: #f8f4f2;
+  width: 170px;
+  padding: 10px 25px 10px 25px;
+  border: 2px solid hsla(36, 61%, 16%, 0.8);
+  border-radius: 5px;
+  color: #000000;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+
+}
+
+.authButton:hover{
+    background-color: #665135;
+    border: 2px solid hsla(36, 61%, 16%, 0.8);
+    border-radius: 5px;
+    color: #fff;
+  }
+
+.switchAuthButton{
+    width: 170px;
+    background-color: #ffedde;
+    padding: 10px 18px 10px 18px;
+    border: 2px solid hsla(36, 61%, 16%, 0.8);
+    border-radius: 5px;
+    color: #000000;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+  
+  }
+
+.switchAuthButton:hover{
+    background-color: #72542c;
+    border: 2px solid hsla(36, 61%, 16%, 0.8);
+    border-radius: 5px;
+    color: #fff;
+}
+
+.authButtonsBlock{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+.authAsGuestButton{
+    background-color: #f8f4f2;
+    width: 170px;
+    padding: 10px 18px 10px 18px;
+    border: 2px solid hsla(36, 61%, 16%, 0.8);
+    border-radius: 5px;
+    color: #000000;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+  
+  }
+
+.authAsGuestButton:hover{
+    background-color: #2f3757;
+    border: 2px solid hsla(36, 61%, 16%, 0.8);
+    border-radius: 5px;
+    color: #fff;
+}
+
+
+.authInputsWrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0px;
+    gap: 12px;
+}
+@media screen and (max-width: 1024px) {
+    .authPageTitle {
+        font-size: 16px;        
+    }
+    .authPageDetails {
+      font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .authPageTitle{
+      font-size: 26px;
+    }
+    .authPageDetails {
+        font-size: 18px;
+    }
+}
