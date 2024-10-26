@@ -69,7 +69,7 @@ const AuthComponent = () => {
           <BotResponse response="Authorize in Handwriting recognition bot or continue as guest" />
         </h1>
         <h2 className='authPageDetails'>
-          <BotResponse response="By picking last option you won't save data and will only have one chat" />
+        By picking guest authorisation  <BotResponse response="your chat data won't be saved and you will only have one chat avaliable." />
         </h2>
         
         <div className='authInputsWrapper'>

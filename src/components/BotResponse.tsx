@@ -14,8 +14,8 @@ const BotResponse: React.FC<BotResponseProps> = ({ response, chatLogRef }) => {
     let index = 1;
     const msg = setInterval(() => {
       if (response !== " - AI tool to recognize english handwriting on your data" &&
-          response !== "Authorise in Handwriting recognition bot or continue as guest" &&
-          response !== "by picking last option you couldn't save data and will only have one chat")
+          response !== "Authorise in handwriting recognition bot or continue as guest" &&
+          response !== "your chat data won't be saved and you will only have one chat avaliable.")
       {
         setIsButtonVisible(true);
       }
