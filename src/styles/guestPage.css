@@ -15,7 +15,8 @@
     width: 90%;
     align-items: start;
     justify-content: start;
-    padding-top: 40px;
+    padding: 40px 0px;
+    gap: 50px;
 }
 .regenerateResponseButton{
     background-color: #f8f4f2;
@@ -34,4 +35,39 @@
     border: 2px solid hsla(36, 61%, 16%, 0.8);
     border-radius: 5px;
     color: #fff;
+}
+
+.chatBlockContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.linkWrapper{
+    padding: 50px;
+    display: flex;
+}
+
+.auth-button{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: 170px;
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+}
+.auth-button:hover{
+    border-radius: 3px;
+    border: #000000;
+    background-color: #ffeddd;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+.auth-button span{
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
 }

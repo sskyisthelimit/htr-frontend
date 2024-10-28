@@ -94,7 +94,9 @@
     transition: background-color 0.3s, color 0.3s;
   
   }
-
+.authButtonsWrapper{
+    margin-top: 30px;
+}
 .switchAuthButton:hover{
     background-color: #72542c;
     border: 2px solid hsla(36, 61%, 16%, 0.8);
