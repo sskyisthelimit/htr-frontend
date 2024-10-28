@@ -4,11 +4,10 @@ import { useDropzone } from "react-dropzone";
 interface UploaderProps {
   onImageUpload: (image: File) => void;
   onSubmit: () => void;
-  tokens: string[];
-  setTokens: React.Dispatch<React.SetStateAction<string[]>>;
+  setIsGenerated: (isGenereated: boolean) => void;
 }
 
-const Uploader: React.FC<UploaderProps> = ({ onImageUpload, onSubmit, tokens, setTokens }) => {
+const Uploader: React.FC<UploaderProps> = ({ onImageUpload, onSubmit, setIsGenerated}) => {
   const [file, setFile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -25,19 +24,7 @@ const Uploader: React.FC<UploaderProps> = ({ onImageUpload, onSubmit, tokens, se
   const submitImage = () => {
     if (!file) return;
     onSubmit();
-    setTokens([]);
-    const generatedTokens = [
-      "Once", "upon", "a", "time,", "in", "a", "land", "far,", "far", "away,", "there", "lived", "a", "brave", "knight", "named", "Arthur.", 
-      "Arthur", "was", "known", "throughout", "the", "kingdom", "for", "his", "courage", "and", "chivalry.", 
-      "One", "day,", "while", "wandering", "through", "the", "enchanted", "forest,", "he", "stumbled", "upon", "a", "mysterious", "cave.", 
-      "Intrigued", "by", "the", "strange", "markings", "on", "the", "cave", "walls,", "Arthur", "decided", "to", "venture", "inside.", 
-      "Deep", "within", "the", "cave,", "he", "found", "an", "ancient", "scroll", "that", "spoke", "of", "a", "hidden", "treasure", "guarded", "by", "a", "fearsome", "dragon.", 
-    ];
-    generatedTokens.forEach((token, index) => {
-      setTimeout(() => {
-        setTokens((prevTokens) => [...prevTokens, token]);
-      }, 70 * index);
-    });
+    setIsGenerated(false);
   };
 
   return (
