@@ -3,7 +3,7 @@
 import { useRouter } from 'next/router';
 import BotResponse from "./BotResponse";
 import React, { useState } from 'react';
-import { signUp, logIn, continueAsGuest } from '../authService';
+// import { signUp, logIn, continueAsGuest } from '../authService';
 import '../styles/authComponent.css';
 
 const AuthComponent = () => {
