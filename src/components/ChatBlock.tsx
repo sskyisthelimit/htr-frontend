@@ -114,7 +114,7 @@ interface ChatBlockProps {
       {isModalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={URL.createObjectURL(image)} alt="Full-size view" className="full-size-image" />
+            <img src={image ? URL.createObjectURL(image): undefined} alt="Full-size view" className="full-size-image" />
             <button className="close-modal-button" onClick={closeModal}>Close</button>
           </div>
         </div>
