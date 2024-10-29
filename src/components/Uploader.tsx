@@ -18,7 +18,7 @@ const Uploader: React.FC<UploaderProps> = ({ onImageUpload, onSubmit, setIsGener
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: "image/*",
+    accept: { 'image/*': [] },
   });
 
   const submitImage = () => {
