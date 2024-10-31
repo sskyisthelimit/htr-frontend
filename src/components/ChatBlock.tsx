@@ -18,31 +18,64 @@ interface ChatBlockProps {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isRegenerated, setIsRegenerated] = useState(false);
   const [isUploadNew, setIsUploadNew] = useState(false);
+  
+  const handleTokensGeneration = async () => {
+    if (!image) return;
 
-  const handleResponseRegeneration = () => {
-    setIsRegenerated(false);
-    setIsGenerated(false);
-    setTokensLog((prevLog) => [...prevLog, currentTokens]);
-    setCurrentTokens([]);
-    const generatedTokens = [
-      "Once", "upon", "a", "time,", "in", "a", "land", "far,", "far", "away,", "there", "lived", "a", "brave", "knight", "named", "Arthur.",
-      "Arthur", "was", "known", "throughout", "the", "kingdom", "for", "his", "courage", "and", "chivalry.",
-      "One", "day,", "while", "wandering", "through", "the", "enchanted", "forest,", "he", "stumbled", "upon", "a", "mysterious", "cave.",
-      "Intrigued", "by", "the", "strange", "markings", "on", "the", "cave", "walls,", "Arthur", "decided", "to", "venture", "inside.",
-      "Deep", "within", "the", "cave,", "he", "found", "an", "ancient", "scroll", "that", "spoke", "of", "a", "hidden", "treasure", "guarded", "by", "a", "fearsome", "dragon.",
-    ];
-    const delayPerToken = 70;
-    generatedTokens.forEach((token, index) => {
-      setTimeout(() => {
-        setCurrentTokens((prevTokens) => [...prevTokens, token]);
-      }, delayPerToken * index);
+    const formData = new FormData();
+    formData.append("file", image);
+
+    const response = await fetch("http://<EC2-Instance-IP>:8000/predict", {
+      method: "POST",
+      body: formData,
     });
-    const totalDelay = delayPerToken * generatedTokens.length;
-    setTimeout(() => {
-      setIsGenerated(true);
-      setIsRegenerated(true);
-      setTokensLog((prevLog) => [...prevLog, generatedTokens]);
-    }, totalDelay);
+
+    const reader = response.body?.getReader();
+    if (reader) {
+      const decoder = new TextDecoder("utf-8");
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const textChunk = decoder.decode(value);
+        const parsedTokens = JSON.parse(textChunk).predicted_word;
+        setCurrentTokens((prevTokens) => [...prevTokens, parsedTokens]);
+      }
+    }
+
+    setTokensLog((prevLog) => [...prevLog, currentTokens.join(" ")]);
+  };
+
+  const handleTokensRegeneration = async () => {
+    setIsGenerated(false);
+    setIsRegenerated(false);
+    setCurrentTokens([]);
+    if (!image) return;
+
+    const formData = new FormData();
+    formData.append("file", image);
+
+    const response = await fetch("http://<EC2-Instance-IP>:8000/predict", {
+      method: "POST",
+      body: formData,
+    });
+
+    const reader = response.body?.getReader();
+    if (reader) {
+      const decoder = new TextDecoder("utf-8");
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const textChunk = decoder.decode(value);
+        const parsedTokens = JSON.parse(textChunk).predicted_word;
+        setCurrentTokens((prevTokens) => [...prevTokens, parsedTokens]);
+      }
+    }
+
+    setTokensLog((prevLog) => [...prevLog, currentTokens.join(" ")]);
+    setIsGenerated(true);
+    setIsRegenerated(true);
   };
 
   const handleNewImageUpload = () => {
@@ -56,26 +89,6 @@ interface ChatBlockProps {
     setIsSubmitted(false);
   };
 
-  const handleTokensGeneration = () => {
-    const generatedTokens = [
-      "Once", "upon", "a", "time,", "in", "a", "land", "far,", "far", "away,", "there", "lived", "a", "brave", "knight", "named", "Arthur.",
-      "Arthur", "was", "known", "throughout", "the", "kingdom", "for", "his", "courage", "and", "chivalry.",
-      "One", "day,", "while", "wandering", "through", "the", "enchanted", "forest,", "he", "stumbled", "upon", "a", "mysterious", "cave.",
-      "Intrigued", "by", "the", "strange", "markings", "on", "the", "cave", "walls,", "Arthur", "decided", "to", "venture", "inside.",
-      "Deep", "within", "the", "cave,", "he", "found", "an", "ancient", "scroll", "that", "spoke", "of", "a", "hidden", "treasure", "guarded", "by", "a", "fearsome", "dragon.",
-    ];
-    const delayPerToken = 70;
-    generatedTokens.forEach((token, index) => {
-      setTimeout(() => {
-        setCurrentTokens((prevTokens) => [...prevTokens, token]);
-      }, delayPerToken * index);
-    });
-    const totalDelay = delayPerToken * generatedTokens.length;
-    setTimeout(() => {
-      setIsGenerated(true);
-    }, totalDelay);
-  };
-
   useEffect(() => {
     if (isSubmitted) {
       handleTokensGeneration();
@@ -86,6 +99,7 @@ interface ChatBlockProps {
     setIsSubmitted(true);
     setIsFirstSubmit(true);
   };
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -143,7 +157,7 @@ interface ChatBlockProps {
       {isGenerated ? (
         <div className="choice-buttons-wrapper">
           <div className="choice-buttons">
-            <button className="choice-button" onClick={handleResponseRegeneration}>
+            <button className="choice-button" onClick={handleTokensRegeneration}>
               Regenerate Response
             </button>
             {!isUploadNew ? (
