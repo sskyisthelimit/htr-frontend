@@ -21,28 +21,28 @@ interface ChatBlockProps {
   
   const handleTokensGeneration = async () => {
     if (!image) return;
-
+  
     const formData = new FormData();
     formData.append("file", image);
-
-    const response = await fetch("http://<EC2-Instance-IP>:8000/predict", {
+  
+    const response = await fetch("https://htr-api.xyz/predict", {
       method: "POST",
       body: formData,
     });
-
+  
     const reader = response.body?.getReader();
     if (reader) {
       const decoder = new TextDecoder("utf-8");
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
+  
         const textChunk = decoder.decode(value);
         const parsedTokens = JSON.parse(textChunk).predicted_word;
         setCurrentTokens((prevTokens) => [...prevTokens, parsedTokens]);
       }
     }
-
+  
     setTokensLog((prevLog) => [...prevLog, currentTokens.join(" ")]);
   };
 
@@ -51,28 +51,28 @@ interface ChatBlockProps {
     setIsRegenerated(false);
     setCurrentTokens([]);
     if (!image) return;
-
+  
     const formData = new FormData();
     formData.append("file", image);
-
-    const response = await fetch("http://<EC2-Instance-IP>:8000/predict", {
+  
+    const response = await fetch("https://htr-api.xyz/predict", {
       method: "POST",
       body: formData,
     });
-
+  
     const reader = response.body?.getReader();
     if (reader) {
       const decoder = new TextDecoder("utf-8");
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
+  
         const textChunk = decoder.decode(value);
         const parsedTokens = JSON.parse(textChunk).predicted_word;
         setCurrentTokens((prevTokens) => [...prevTokens, parsedTokens]);
       }
     }
-
+  
     setTokensLog((prevLog) => [...prevLog, currentTokens.join(" ")]);
     setIsGenerated(true);
     setIsRegenerated(true);
